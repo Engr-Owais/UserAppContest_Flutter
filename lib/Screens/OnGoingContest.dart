@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contest_user_app/Screens/Voting_Screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:contest_user_app/Model/Contest_Model.dart';
+import 'package:contest_user_app/dbhelper/db.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gradient_widgets/gradient_widgets.dart';
 
 class OnGoingContest extends StatefulWidget {
   @override
@@ -10,6 +10,8 @@ class OnGoingContest extends StatefulWidget {
 }
 
 class _OnGoingContestState extends State<OnGoingContest> {
+  final Database _firestore = Database();
+  String _contestid;
   String contestName;
   String description;
   @override
@@ -28,12 +30,10 @@ class _OnGoingContestState extends State<OnGoingContest> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection("contests")
-                    .snapshots(),
+              child: StreamBuilder<List<ContestModel>>(
+                stream: _firestore.getUserList(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> querySnapshot) {
+                    AsyncSnapshot<List<ContestModel>> querySnapshot) {
                   if (querySnapshot.hasError) {
                     return Text("Error Loading Data ......");
                   }
@@ -41,45 +41,46 @@ class _OnGoingContestState extends State<OnGoingContest> {
                       ConnectionState.waiting) {
                     return CircularProgressIndicator();
                   } else {
-                    final list = querySnapshot.data.docs;
+                    final list = querySnapshot.data;
                     return ListView.builder(
                         itemCount: list.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5.0, horizontal: 5),
-                            child: GradientCard(
-                              gradient: Gradients.blush,
-                              shadowColor: Gradients.tameer.colors.last
-                                  .withOpacity(0.25),
-                              elevation: 8,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: ListTile(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 30),
-                                  isThreeLine: true,
-                                  title: Text(
-                                    list[index]["content"],
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.balooDa(fontSize: 30),
-                                  ),
-                                  subtitle: Text(
-                                    list[index]["description"],
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.workSans(fontSize: 15),
-                                  ),
-                                  onTap: () => {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    VotingList(
-                                                        id: list[index].id)))
-                                      }),
-                            ),
-                          );
-                        });
+                        itemBuilder: (context, index) => list.length == 0
+                            ? Text("No Data Found")
+                            : Card(
+                                child: ListTile(
+                                    isThreeLine: true,
+                                    leading: CachedNetworkImage(
+                                      imageUrl: list[index].imageUrl,
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                        height: 50,
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            alignment: Alignment.center,
+                                            image: imageProvider,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      placeholder: (context, url) =>
+                                          CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error),
+                                    ),
+                                    title: Text(
+                                      list[index].content == null
+                                          ? ""
+                                          : list[index].content,
+                                      style: GoogleFonts.balooDa(fontSize: 30),
+                                    ),
+                                    subtitle: Text(
+                                      list[index].description == null
+                                          ? ""
+                                          : list[index].description,
+                                      style: GoogleFonts.workSans(fontSize: 15),
+                                    )),
+                              ));
                   }
                 },
               ),

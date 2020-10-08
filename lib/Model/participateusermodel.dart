@@ -1,18 +1,26 @@
-class ParticipateModel {
-  final String name;
-  final String email;
-  final String phone;
+class ContestModel {
+  String username;
+  String email;
+  String imageUrl;
+  String phone;
 
-  ParticipateModel({
-    this.name,
-    this.email,
-        this.phone,
+  ContestModel({this.username, this.email, this.imageUrl , this.phone});
 
-  });
+  Map<String, dynamic> toMap() {
+    var data = Map<String, dynamic>();
 
-  Map<String, dynamic> toMap() => {
-        "name": name,
-        "email": email,
-        "phone": phone,
-      };
+    data["username"] =username;
+    data["email"] = email;
+    data["imageUrl"] = imageUrl;
+    data["phone"] = phone;
+
+    return data;
+  }
+
+  ContestModel.fromJson(Map<String, dynamic> parsedJson) {
+    username = parsedJson['username'];
+    email = parsedJson['email'];
+    imageUrl = parsedJson['imageUrl'];
+    phone = parsedJson['phone'];
+  }
 }

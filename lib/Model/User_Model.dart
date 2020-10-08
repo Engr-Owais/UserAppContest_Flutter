@@ -3,8 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserModel {
   final String name;
   final String email;
-  // final String imgUrl;
-
+  final int phone;
   final int votes;
   final DocumentReference reference;
 
@@ -12,9 +11,11 @@ class UserModel {
       : assert(map['name'] != null),
         assert(map['votes'] != null),
         assert(map['email'] != null),
+        assert(map['phone'] != null),
         // assert(map['imgUrl'] != null),
         name = map['name'],
         votes = map['votes'],
+        phone = map['phone'],
         email = map['email'];
         // imgUrl = map['imgUrl'];
 
