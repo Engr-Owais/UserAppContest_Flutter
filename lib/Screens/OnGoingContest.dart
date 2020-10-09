@@ -42,74 +42,137 @@ class _OnGoingContestState extends State<OnGoingContest> {
                     return Text("Error Loading Data ......");
                   }
                   if (querySnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                      ConnectionState.none) {
+                    return Center(child: CircularProgressIndicator(strokeWidth: 5,));
                   } else {
                     final list = querySnapshot.data;
                     return ListView.builder(
-                        itemCount: list.length,
-                        itemBuilder: (context, index) => list.length == 0
-                            ? Text("No Data Found")
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          width: 2, color: Colors.red),
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(30),
-                                          bottomRight: Radius.circular(30),
-                                          topRight: Radius.circular(15),
-                                          bottomLeft: Radius.circular(15))),
-                                  child: ListTile(
-                                    isThreeLine: true,
-                                    leading: CachedNetworkImage(
-                                      imageUrl: list[index].imageUrl,
-                                      imageBuilder: (context, imageProvider) =>
-                                          Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 7),
-                                        child: Container(
-                                          height: 90,
-                                          width: 60,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            image: DecorationImage(
-                                              alignment: Alignment.center,
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
+                      itemCount: list.length,
+                      itemBuilder: (context, index) => list.length == 0
+                          ? Text("No Data Found")
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: CachedNetworkImage(
+                                          imageUrl: list[index].imageUrl,
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: 300,
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(20),
+                                                  topRight: Radius.circular(20),
+                                                  bottomLeft:
+                                                      Radius.circular(20),
+                                                  bottomRight:
+                                                      Radius.circular(20)),
+                                              shape: BoxShape.rectangle,
+                                              image: DecorationImage(
+                                                alignment: Alignment.center,
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                                colorFilter: ColorFilter.mode(
+                                                    Colors.red,
+                                                    BlendMode.colorBurn),
+                                              ),
                                             ),
                                           ),
+                                          placeholder: (context, url) =>
+                                              CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
                                         ),
                                       ),
-                                      placeholder: (context, url) =>
-                                          CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons.error),
                                     ),
-                                    title: Text(
-                                      list[index].title == null
-                                          ? ""
-                                          : list[index].title,
-                                      style: GoogleFonts.balooDa(fontSize: 30),
+                                    Divider(
+                                      color: Colors.red,
+                                      thickness: 2,
+                                      height: 2,
+                                      indent: 20,
+                                      endIndent: 20,
                                     ),
-                                    subtitle: Text(
-                                      list[index].description == null
-                                          ? ""
-                                          : list[index].description,
-                                      style: GoogleFonts.workSans(fontSize: 15),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ListTile(
+                                        selected: true,
+                                        isThreeLine: true,
+                                        // leading: CachedNetworkImage(
+                                        //   imageUrl: list[index].imageUrl,
+                                        //   imageBuilder:
+                                        //       (context, imageProvider) =>
+                                        //           Padding(
+                                        //     padding: const EdgeInsets.only(
+                                        //         bottom: 7),
+                                        //     child: Container(
+                                        //       height: 90,
+                                        //       width: 60,
+                                        //       decoration: BoxDecoration(
+                                        //         borderRadius:
+                                        //             BorderRadius.circular(30),
+                                        //         image: DecorationImage(
+                                        //           alignment: Alignment.center,
+                                        //           image: imageProvider,
+                                        //           fit: BoxFit.cover,
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        //   placeholder: (context, url) =>
+                                        //       CircularProgressIndicator(),
+                                        //   errorWidget: (context, url, error) =>
+                                        //       Icon(Icons.error),
+                                        // ),
+                                        title: Text(
+                                          list[index].title == null
+                                              ? ""
+                                              : list[index].title,
+                                          style: GoogleFonts.acme(
+                                              fontSize: 30,
+                                              color: Colors.black,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        subtitle: Text(
+                                          list[index].description == null
+                                              ? ""
+                                              : list[index].description,
+                                          style: GoogleFonts.asar(
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w300,
+                                            fontStyle: FontStyle.normal,
+                                          ),
+                                        ),
+                                        onTap: () => {
+                                          _showDialogBoth(),
+                                          vari.setContestID(list[index].id),
+                                          print(list[index].id),
+                                          print("GetIDD ${vari.getContestID()}")
+                                        },
+                                        trailing: Icon(Icons.arrow_forward_ios),
+                                      ),
                                     ),
-                                    onTap: () => {
-                                      _showDialogBoth(),
-                                      vari.setContestID(list[index].id),
-                                      print(list[index].id),
-                                      print("GetIDD ${vari.getContestID()}")
-                                    },
-                                    trailing: Icon(Icons.arrow_forward_ios),
-                                  ),
+                                  ],
                                 ),
-                              ));
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(width: 2, color: Colors.red),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30),
+                                        bottomRight: Radius.circular(30),
+                                        topRight: Radius.circular(15),
+                                        bottomLeft: Radius.circular(15))),
+                              ),
+                            ),
+                    );
                   }
                 },
               ),
@@ -132,8 +195,8 @@ class _OnGoingContestState extends State<OnGoingContest> {
                   onPressed: () => _buttonOne(), child: Text("PARTICIPATE")),
               FlatButton(onPressed: () => _buttonTwo(), child: Text("VOTE"))
             ],
-            shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           );
         });
   }

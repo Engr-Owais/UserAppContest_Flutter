@@ -96,49 +96,65 @@ class _VotingScreenState extends State<VotingScreen> {
                                           ),
                                         ),
                                       ),
-                                      ListTile(contentPadding: EdgeInsets.all(8.0),
-                                        isThreeLine: true,
-                                        title: Text(
-                                          list[index].username == null
-                                              ? ""
-                                              : list[index].username,
-                                          style:
-                                              GoogleFonts.balooDa(fontSize: 30),
-                                        ),
-                                        subtitle: Text(
-                                          list[index].email == null
-                                              ? ""
-                                              : list[index].email,
-                                          style: GoogleFonts.workSans(
-                                              fontSize: 15),
-                                        ),
-                                        trailing: FloatingActionButton(
-
-                                          onPressed: () async => {
+                                      Divider(
+                                        color: Colors.red,
+                                        thickness: 2,
+                                        height: 2,
+                                        indent: 20,
+                                        endIndent: 20,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.all(8.0),
+                                          isThreeLine: true,
+                                          title: Text(
+                                            list[index].username == null
+                                                ? ""
+                                                : list[index].username,
+                                            style: GoogleFonts.acme(
+                                                fontSize: 30,
+                                                color: Colors.black,
+                                                fontStyle: FontStyle.normal,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          subtitle: Text(
+                                            list[index].email == null
+                                                ? ""
+                                                : list[index].email,
+                                            style: GoogleFonts.acme(
+                                                fontSize: 30,
+                                                color: Colors.black,
+                                                fontStyle: FontStyle.normal,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          trailing: FloatingActionButton(
+                                            onPressed: () async => {
+                                              userid = list[index].id,
+                                              check = true,
+                                              await _firestore.updateVote(
+                                                  variables.getContestID(),
+                                                  userid,
+                                                  list[index].votes),
+                                            },
+                                            child: Center(
+                                              child: Text(
+                                                " ${list[index].votes}",
+                                                style: GoogleFonts.workSans(
+                                                    fontSize: 15),
+                                              ),
+                                            ),
+                                          ),
+                                          onTap: () async => {
                                             userid = list[index].id,
                                             check = true,
                                             await _firestore.updateVote(
                                                 variables.getContestID(),
                                                 userid,
                                                 list[index].votes),
+                                            Navigator.pop(context),
                                           },
-                                          child: Center(
-                                            child: Text(
-                                              " ${list[index].votes}",
-                                              style: GoogleFonts.workSans(
-                                                  fontSize: 15),
-                                            ),
-                                          ),
                                         ),
-                                        onTap: () async => {
-                                          userid = list[index].id,
-                                          check = true,
-                                          await _firestore.updateVote(
-                                              variables.getContestID(),
-                                              userid,
-                                              list[index].votes),
-                                          Navigator.pop(context),
-                                        },
                                       ),
                                     ],
                                   ),
