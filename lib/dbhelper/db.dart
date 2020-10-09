@@ -37,7 +37,8 @@ class Database {
                   "id": document.id,
                   "username": document.data()['username'],
                   "email": document.data()['email'],
-                  "votes":document.data()['votes']
+                  "votes":document.data()['votes'],
+                  "imageUrlUser":document.data()['imageUrlUser']
                 }))
             .toList());
   }

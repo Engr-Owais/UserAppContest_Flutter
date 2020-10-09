@@ -24,7 +24,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
       appBar: AppBar(
         elevation: 3.0,
         title: Text(
-          "CONTESTS",
+          "CONTESTS RUNNING",
           style: GoogleFonts.aclonica(color: Colors.black),
         ),
         centerTitle: true,
@@ -103,6 +103,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                       print(list[index].id),
                                       print("GetIDD ${vari.getContestID()}")
                                     },
+                                    trailing: Icon(Icons.arrow_forward_ios),
                                   ),
                                 ),
                             ));

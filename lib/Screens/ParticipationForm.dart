@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:contest_user_app/Model/participateusermodel.dart';
 import 'package:contest_user_app/dbhelper/db.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as Path;
 
 class FormParticipate extends StatefulWidget {
   @override
@@ -23,6 +28,41 @@ class _FormParticipateState extends State<FormParticipate> {
       return null;
   }
 
+  final Database _firestore = Database();
+  final _globalkey = GlobalKey<FormState>();
+  TextEditingController _name = TextEditingController();
+  TextEditingController _email = TextEditingController();
+  TextEditingController _phone = TextEditingController();
+  // final ImagePicker _picker = ImagePicker();
+  File sampleimage;
+  String url;
+
+  _imgFromGallery() async {
+    //   // ignore: deprecated_member_use
+    // ignore: deprecated_member_use
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      sampleimage = image;
+    });
+  }
+
+  Future<void> uploadStatusImage() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('UserPictures/${Path.basename(sampleimage.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(sampleimage);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    await storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        url = fileURL;
+      });
+
+      print(fileURL);
+    });
+  }
+
   String validateName(String value) {
     if (value.length < 3) {
       return 'Name must be more than 2 charater';
@@ -30,12 +70,6 @@ class _FormParticipateState extends State<FormParticipate> {
     return null;
   }
 
-  final Database _firestore = Database();
-  final _globalkey = GlobalKey<FormState>();
-  TextEditingController _name = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _phone = TextEditingController();
-  // final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +86,15 @@ class _FormParticipateState extends State<FormParticipate> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           children: <Widget>[
+            Center(
+              child: sampleimage == null
+                  ? Text("SELECT AN IMAGE")
+                  : enableUpload(),
+            ),
+            RaisedButton(
+              onPressed: () => {_imgFromGallery()},
+              child: Text("IMAGE"),
+            ),
             nameFormField(),
             SizedBox(
               height: 20,
@@ -65,13 +108,17 @@ class _FormParticipateState extends State<FormParticipate> {
               height: 50,
             ),
             RaisedButton(
-              onPressed: () {
+              onPressed: () async {
+                await uploadStatusImage();
                 final UserContestModel usercontestmodel = UserContestModel(
                     username: _name.text,
                     email: _email.text,
                     phone: _phone.text,
+                    imageUrlUser: url,
                     votes: 0);
 
+                print(
+                    "IMAGE URL AFTER BUTTON PRESS PARTICIPATE ${usercontestmodel.imageUrlUser} and $url");
                 if (regexEmail.hasMatch(_email.text) &&
                     regMobile.hasMatch(_phone.text)) {
                   _firestore.addContent(usercontestmodel);
@@ -88,12 +135,32 @@ class _FormParticipateState extends State<FormParticipate> {
                   _showDialogemail();
                 }
               },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-              color: Colors.amber,elevation: 2.0,padding: EdgeInsets.all(20),
-              child: Text("PARTICIPATE", style: GoogleFonts.aBeeZee(fontSize: 20)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40)),
+              color: Colors.amber,
+              elevation: 2.0,
+              padding: EdgeInsets.all(20),
+              child:
+                  Text("PARTICIPATE", style: GoogleFonts.aBeeZee(fontSize: 20)),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget enableUpload() {
+    return Container(
+      height: 300,
+      width: 300,
+      child: Column(
+        children: [
+          Image.file(
+            sampleimage,
+            height: 200,
+            width: 100,
+          )
+        ],
       ),
     );
   }

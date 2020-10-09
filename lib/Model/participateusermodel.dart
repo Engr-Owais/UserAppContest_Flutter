@@ -2,12 +2,12 @@ class UserContestModel {
   String username;
   String email;
   String id;
-  String imageUrl;
+  String imageUrlUser;
   String phone;
   int votes;
   
 
-  UserContestModel({this.username, this.email, this.imageUrl , this.phone , this.votes,this.id });
+  UserContestModel({this.username, this.email, this.imageUrlUser , this.phone , this.votes,this.id });
 
   Map<String, dynamic> toMap() {
     var data = Map<String, dynamic>();
@@ -15,7 +15,7 @@ class UserContestModel {
     data["username"] =username;
     data["email"] = email;
     data["id"] =id;
-    data["imageUrl"] = imageUrl;
+    data["imageUrlUser"] = imageUrlUser;
     data["phone"] = phone;
     data["votes"] = votes;
 
@@ -26,7 +26,7 @@ class UserContestModel {
     username = parsedJson['username'];
     email = parsedJson['email'];
     id = parsedJson['id'];
-    imageUrl = parsedJson['imageUrl'];
+    imageUrlUser = parsedJson['imageUrlUser'];
     phone = parsedJson['phone'];
     votes = parsedJson['votes'];
   }

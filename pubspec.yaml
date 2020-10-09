@@ -28,11 +28,15 @@ dependencies:
 
   get:
 
+  image_picker:
+
   cloud_firestore: ^0.14.1+2
 
   firebase_database: ^4.1.0
 
   firebase: ^7.3.0
+
+  firebase_storage: ^4.0.1
 
   gradient_widgets: ^0.5.1
 
