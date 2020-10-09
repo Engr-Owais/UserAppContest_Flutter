@@ -1,5 +1,8 @@
+import 'package:contest_user_app/Model/participateusermodel.dart';
+import 'package:contest_user_app/dbhelper/db.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/cupertino.dart';
 
 class FormParticipate extends StatefulWidget {
   @override
@@ -7,6 +10,27 @@ class FormParticipate extends StatefulWidget {
 }
 
 class _FormParticipateState extends State<FormParticipate> {
+  RegExp regexEmail = new RegExp(
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+
+  RegExp regMobile = new RegExp('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]');
+
+  String validateMobile(String value) {
+// Indian Mobile number are of 10 digit only
+    if (value.length != 10)
+      return 'Mobile Number must be of 10 digit';
+    else
+      return null;
+  }
+
+  String validateName(String value) {
+    if (value.length < 3) {
+      return 'Name must be more than 2 charater';
+    }
+    return null;
+  }
+
+  final Database _firestore = Database();
   final _globalkey = GlobalKey<FormState>();
   TextEditingController _name = TextEditingController();
   TextEditingController _email = TextEditingController();
@@ -38,13 +62,36 @@ class _FormParticipateState extends State<FormParticipate> {
             ),
             phoneTextField(),
             SizedBox(
-              height: 20,
+              height: 50,
             ),
-            IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () => {},
-              iconSize: 50,
-            )
+            RaisedButton(
+              onPressed: () {
+                final UserContestModel usercontestmodel = UserContestModel(
+                    username: _name.text,
+                    email: _email.text,
+                    phone: _phone.text,
+                    votes: 0);
+
+                if (regexEmail.hasMatch(_email.text) &&
+                    regMobile.hasMatch(_phone.text)) {
+                  _firestore.addContent(usercontestmodel);
+                  _name.text = "";
+                  _email.text = "";
+                  _phone.text = "";
+                  Navigator.pop(context);
+                } else if (!regexEmail.hasMatch(_email.text) &&
+                    !regMobile.hasMatch(_phone.text)) {
+                  _showDialogBoth();
+                } else if (!regMobile.hasMatch(_phone.text)) {
+                  _showDialogMobile();
+                } else if (!regexEmail.hasMatch(_email.text)) {
+                  _showDialogemail();
+                }
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+              color: Colors.amber,elevation: 2.0,padding: EdgeInsets.all(20),
+              child: Text("PARTICIPATE", style: GoogleFonts.aBeeZee(fontSize: 20)),
+            ),
           ],
         ),
       ),
@@ -55,11 +102,7 @@ class _FormParticipateState extends State<FormParticipate> {
     return TextFormField(
       keyboardType: TextInputType.name,
       controller: _name,
-      validator: (value) {
-        if (value.isEmpty) return "Name can't be empty";
-
-        return null;
-      },
+      validator: (value) => validateName(value),
       decoration: InputDecoration(
         border: OutlineInputBorder(
             borderSide: BorderSide(
@@ -85,11 +128,6 @@ class _FormParticipateState extends State<FormParticipate> {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       controller: _email,
-      validator: (value) {
-        if (value.isEmpty) return "Email can't be empty";
-
-        return null;
-      },
       decoration: InputDecoration(
         border: OutlineInputBorder(
             borderSide: BorderSide(
@@ -115,11 +153,7 @@ class _FormParticipateState extends State<FormParticipate> {
     return TextFormField(
       controller: _phone,
       keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value.isEmpty) return "Phone can't be empty";
-
-        return null;
-      },
+      validator: (value) => validateMobile(value),
       decoration: InputDecoration(
         border: OutlineInputBorder(
             borderSide: BorderSide(
@@ -139,5 +173,53 @@ class _FormParticipateState extends State<FormParticipate> {
         hintText: "+01231151515",
       ),
     );
+  }
+
+  void _showDialogemail() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("INVALID EMAIL (${(_email.text)})"),
+            actions: [
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"))
+            ],
+          );
+        });
+  }
+
+  void _showDialogMobile() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("INVALID PHONE (${(_phone.text)})"),
+            actions: [
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"))
+            ],
+          );
+        });
+  }
+
+  void _showDialogBoth() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("INVALID PHONE AND EMAIL"),
+            actions: [
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"))
+            ],
+          );
+        });
   }
 }

@@ -37,6 +37,7 @@ dependencies:
   gradient_widgets: ^0.5.1
 
   cached_network_image: ^2.3.2+1
+  vdialog: ^0.2.4
 
 
 

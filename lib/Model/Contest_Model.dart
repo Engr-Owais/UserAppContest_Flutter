@@ -1,23 +1,26 @@
 class ContestModel {
-  String content;
+  String title;
   String description;
   String imageUrl;
+  String id;
 
-  ContestModel({this.content, this.description, this.imageUrl});
+  ContestModel({this.title, this.description, this.imageUrl ,this.id});
 
   Map<String, dynamic> toMap() {
     var data = Map<String, dynamic>();
 
-    data["title"] = content;
+    data["title"] = title;
     data["description"] = description;
     data["imageUrl"] = imageUrl;
+    data["id"] = id;
 
     return data;
   }
 
   ContestModel.fromJson(Map<String, dynamic> parsedJson) {
-    content = parsedJson['title'];
+    title = parsedJson['title'];
     description = parsedJson['description'];
     imageUrl = parsedJson['imageUrl'];
+    id = parsedJson['id'];
   }
 }
