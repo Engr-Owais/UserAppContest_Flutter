@@ -6,7 +6,6 @@ import 'package:contest_user_app/dbhelper/db.dart';
 import 'package:contest_user_app/varibles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vdialog/vdialog.dart';
 
 class OnGoingContest extends StatefulWidget {
   @override
@@ -14,6 +13,7 @@ class OnGoingContest extends StatefulWidget {
 }
 
 class _OnGoingContestState extends State<OnGoingContest> {
+  
   final Variables vari = Variables();
   final Database _firestore = Database();
   String contestName;
@@ -31,7 +31,6 @@ class _OnGoingContestState extends State<OnGoingContest> {
       ),
       body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.max,
           children: [
             Expanded(
               child: StreamBuilder<List<ContestModel>>(
@@ -41,10 +40,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                   if (querySnapshot.hasError) {
                     return Text("Error Loading Data ......");
                   }
-                  if (querySnapshot.connectionState ==
-                      ConnectionState.none) {
-                    return Center(child: CircularProgressIndicator(strokeWidth: 5,));
-                  } else {
+                  if (querySnapshot.connectionState == ConnectionState.active) {
                     final list = querySnapshot.data;
                     return ListView.builder(
                       itemCount: list.length,
@@ -172,6 +168,15 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                         bottomLeft: Radius.circular(15))),
                               ),
                             ),
+                    );
+                  } else {
+                    return Center(
+                      child: Column(
+                        children: [
+                          CircularProgressIndicator(),
+                          Text("TURN ON YOUR INTERNET")
+                        ],
+                      ),
                     );
                   }
                 },

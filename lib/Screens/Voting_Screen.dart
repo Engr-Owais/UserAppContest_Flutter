@@ -123,10 +123,10 @@ class _VotingScreenState extends State<VotingScreen> {
                                                 ? ""
                                                 : list[index].email,
                                             style: GoogleFonts.acme(
-                                                fontSize: 30,
+                                                fontSize: 15,
                                                 color: Colors.black,
                                                 fontStyle: FontStyle.normal,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.w300),
                                           ),
                                           trailing: FloatingActionButton(
                                             onPressed: () async => {

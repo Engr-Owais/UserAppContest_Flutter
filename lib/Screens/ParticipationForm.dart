@@ -20,6 +20,8 @@ class _FormParticipateState extends State<FormParticipate> {
 
   RegExp regMobile = new RegExp('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]');
 
+  RegExp regName = new RegExp('^[a-zA-Z]+(([,. -][a-zA-Z ])?[a-zA-Z]*)*');
+
   String validateMobile(String value) {
 // Indian Mobile number are of 10 digit only
     if (value.length != 10)
@@ -33,7 +35,6 @@ class _FormParticipateState extends State<FormParticipate> {
   TextEditingController _name = TextEditingController();
   TextEditingController _email = TextEditingController();
   TextEditingController _phone = TextEditingController();
-  // final ImagePicker _picker = ImagePicker();
   File sampleimage;
   String url;
 
@@ -64,7 +65,7 @@ class _FormParticipateState extends State<FormParticipate> {
   }
 
   String validateName(String value) {
-    if (value.length < 3) {
+    if (value.length < 6) {
       return 'Name must be more than 2 charater';
     }
     return null;
@@ -86,15 +87,12 @@ class _FormParticipateState extends State<FormParticipate> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           children: <Widget>[
-            Center(
-              child: sampleimage == null
-                  ? Text("SELECT AN IMAGE")
-                  : enableUpload(),
-            ),
-            RaisedButton(
-              onPressed: () => {_imgFromGallery()},
-              child: Text("IMAGE"),
-            ),
+            enableUpload(),
+            SizedBox(height: 20),
+            // RaisedButton(
+            //   onPressed: () => {_imgFromGallery()},
+            //   child: Text("IMAGE"),
+            // ),
             nameFormField(),
             SizedBox(
               height: 20,
@@ -109,7 +107,13 @@ class _FormParticipateState extends State<FormParticipate> {
             ),
             RaisedButton(
               onPressed: () async {
+                if (_name.text == "" ||
+                    _email.text == "" ||
+                    _phone.text == "") {
+                  _showDialogBoth();
+                }
                 await uploadStatusImage();
+
                 final UserContestModel usercontestmodel = UserContestModel(
                     username: _name.text,
                     email: _email.text,
@@ -117,22 +121,18 @@ class _FormParticipateState extends State<FormParticipate> {
                     imageUrlUser: url,
                     votes: 0);
 
-                print(
-                    "IMAGE URL AFTER BUTTON PRESS PARTICIPATE ${usercontestmodel.imageUrlUser} and $url");
                 if (regexEmail.hasMatch(_email.text) &&
                     regMobile.hasMatch(_phone.text)) {
                   _firestore.addContent(usercontestmodel);
                   _name.text = "";
                   _email.text = "";
                   _phone.text = "";
-                  Navigator.pop(context);
-                } else if (!regexEmail.hasMatch(_email.text) &&
-                    !regMobile.hasMatch(_phone.text)) {
-                  _showDialogBoth();
                 } else if (!regMobile.hasMatch(_phone.text)) {
                   _showDialogMobile();
                 } else if (!regexEmail.hasMatch(_email.text)) {
                   _showDialogemail();
+                } else if (!regName.hasMatch(_name.text)) {
+                  _showDialogName();
                 }
               },
               shape: RoundedRectangleBorder(
@@ -150,19 +150,58 @@ class _FormParticipateState extends State<FormParticipate> {
   }
 
   Widget enableUpload() {
-    return Container(
-      height: 300,
-      width: 300,
-      child: Column(
-        children: [
-          Image.file(
-            sampleimage,
-            height: 200,
-            width: 100,
-          )
-        ],
-      ),
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 32,
+        ),
+        Center(
+          child: GestureDetector(
+            onTap: () {
+              _imgFromGallery();
+            },
+            child: CircleAvatar(
+              radius: 55,
+              backgroundColor: Color(0xffFDCF09),
+              child: sampleimage != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.file(
+                        sampleimage,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(50)),
+                      width: 100,
+                      height: 100,
+                      child: Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+            ),
+          ),
+        )
+      ],
     );
+    // Container(
+    //   height: 300,
+    //   width: 300,
+    //   child: Column(
+    //     children: [
+    //       Image.file(
+    //         sampleimage,
+    //         height: 200,
+    //         width: 100,
+    //       )
+    //     ],
+    //   ),
+    // );
   }
 
   Widget nameFormField() {
@@ -274,13 +313,29 @@ class _FormParticipateState extends State<FormParticipate> {
         });
   }
 
+  void _showDialogName() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("INVALID Name (${(_name.text)})"),
+            actions: [
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"))
+            ],
+          );
+        });
+  }
+
   void _showDialogBoth() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Error"),
-            content: Text("INVALID PHONE AND EMAIL"),
+            content: Text("INVALID FIELDS"),
             actions: [
               new FlatButton(
                   onPressed: () => Navigator.of(context).pop(),
