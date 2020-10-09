@@ -51,8 +51,8 @@ class _OnGoingContestState extends State<OnGoingContest> {
                         itemBuilder: (context, index) => list.length == 0
                             ? Text("No Data Found")
                             : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
                                   shape: RoundedRectangleBorder(
                                       side: BorderSide(
                                           width: 2, color: Colors.red),
@@ -67,19 +67,22 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                       imageUrl: list[index].imageUrl,
                                       imageBuilder: (context, imageProvider) =>
                                           Padding(
-                                            padding: const EdgeInsets.only(bottom: 7),
-                                            child: Container(
-                                        height: 90,
-                                        width: 60,
-                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 7),
+                                        child: Container(
+                                          height: 90,
+                                          width: 60,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                             image: DecorationImage(
                                               alignment: Alignment.center,
                                               image: imageProvider,
                                               fit: BoxFit.cover,
                                             ),
+                                          ),
                                         ),
                                       ),
-                                          ),
                                       placeholder: (context, url) =>
                                           CircularProgressIndicator(),
                                       errorWidget: (context, url, error) =>
@@ -98,7 +101,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                       style: GoogleFonts.workSans(fontSize: 15),
                                     ),
                                     onTap: () => {
-                                      showVDialog(),
+                                      _showDialogBoth(),
                                       vari.setContestID(list[index].id),
                                       print(list[index].id),
                                       print("GetIDD ${vari.getContestID()}")
@@ -106,7 +109,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                     trailing: Icon(Icons.arrow_forward_ios),
                                   ),
                                 ),
-                            ));
+                              ));
                   }
                 },
               ),
@@ -117,85 +120,22 @@ class _OnGoingContestState extends State<OnGoingContest> {
     );
   }
 
-  void showVDialog() {
+  void _showDialogBoth() {
     showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext ctx) => CustomDialog(
-        titleContainerWidget: customTitleText(),
-        contentContainerWidget: customContentText(),
-        customButtonOneWidget: customButtonOne(),
-        customButtonTwoWidget: customButtonTwo(),
-        showButtonOne: true,
-        showButtonTwo: true,
-        haveAnimation: true,
-        showIcon: false,
-        animationsType: mAnimations.fade,
-        slideInTypes: SlideInTypes.SlideInLeft,
-        animationMilliseconds: 500,
-      ),
-    );
-  }
-
-  Widget customTitleText() {
-    return Container(
-      width: double.infinity,
-      alignment: Alignment.center,
-      child: Text(
-        "SELECT YOUR OPTION",
-        textAlign: TextAlign.end,
-        style: GoogleFonts.abel(fontSize: 30),
-      ),
-    );
-  }
-
-  Widget customContentText() {
-    return Container(
-      width: double.infinity,
-      alignment: Alignment.center,
-      child: Text(
-        "WOULD YOU LIKE TO JOIN CONTEST OR YOU WANT TO VOTE",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 15,
-        ),
-      ),
-    );
-  }
-
-  Widget customButtonOne() {
-    return Container(
-      margin: EdgeInsets.only(right: 40),
-      child: FlatButton(
-        color: Colors.amber,
-        onPressed: () {
-          _buttonOne();
-          // To close the dialog
-        },
-        child: Text(
-          "PARTICIPATE",
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
-    );
-  }
-
-  Widget customButtonTwo() {
-    return Container(
-      margin: EdgeInsets.only(right: 20),
-      child: FlatButton(
-        color: Colors.amber,
-        onPressed: () => {
-          _buttonTwo(),
-
-          // To close the dialog
-        },
-        child: Text(
-          "VOTE",
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("SELECT YOUR OPTION"),
+            content: Text("WOULD YOU LIKE TO JOIN CONTEST OR YOU WANT TO VOTE"),
+            actions: [
+              new FlatButton(
+                  onPressed: () => _buttonOne(), child: Text("PARTICIPATE")),
+              FlatButton(onPressed: () => _buttonTwo(), child: Text("VOTE"))
+            ],
+            shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            
+          );
+        });
   }
 
   void _buttonOne() {
