@@ -5,9 +5,9 @@ class UserContestModel {
   String imageUrlUser;
   String phone;
   int votes;
-  
+  bool isWinner;
 
-  UserContestModel({this.username, this.email, this.imageUrlUser , this.phone , this.votes,this.id });
+  UserContestModel({this.username, this.email, this.imageUrlUser , this.phone , this.votes,this.id ,this.isWinner});
 
   Map<String, dynamic> toMap() {
     var data = Map<String, dynamic>();
@@ -18,6 +18,7 @@ class UserContestModel {
     data["imageUrlUser"] = imageUrlUser;
     data["phone"] = phone;
     data["votes"] = votes;
+    data["isWinner"] = isWinner;
 
     return data;
   }
@@ -28,6 +29,7 @@ class UserContestModel {
     id = parsedJson['id'];
     imageUrlUser = parsedJson['imageUrlUser'];
     phone = parsedJson['phone'];
+    votes = parsedJson['votes'];
     votes = parsedJson['votes'];
   }
 }

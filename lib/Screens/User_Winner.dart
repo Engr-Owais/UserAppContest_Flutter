@@ -1,20 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:contest_user_app/Model/Contest_Model.dart';
-import 'package:contest_user_app/Screens/ParticipationForm.dart';
-import 'package:contest_user_app/Screens/ExpiredContest.dart';
-import 'package:contest_user_app/Screens/Voting_Screen.dart';
+import 'package:contest_user_app/Model/participateusermodel.dart';
 import 'package:contest_user_app/dbhelper/db.dart';
 import 'package:contest_user_app/varibles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class OnGoingContest extends StatefulWidget {
+class UserWinner extends StatefulWidget {
   @override
-  _OnGoingContestState createState() => _OnGoingContestState();
+  _UserWinnerState createState() => _UserWinnerState();
 }
 
-class _OnGoingContestState extends State<OnGoingContest> {
-  
+class _UserWinnerState extends State<UserWinner> {
   final Variables vari = Variables();
   final Database _firestore = Database();
   String contestName;
@@ -25,50 +21,19 @@ class _OnGoingContestState extends State<OnGoingContest> {
       appBar: AppBar(
         elevation: 3.0,
         title: Text(
-          "CONTESTS RUNNING",
+          "WINNER OF CONTEST",
           style: GoogleFonts.aclonica(color: Colors.black),
         ),
         centerTitle: true,
-      ),
-      bottomNavigationBar: BottomAppBar(
-        // shape: CircularNotchedRectangle(),
-        notchMargin: 3.0,
-        elevation: 10.0,
-        color: Colors.amber,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
-                  splashColor: Colors.black,
-                  iconSize: 30,
-                  icon: Icon(
-                    Icons.format_list_numbered,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultScreen()));
-                  }),
-              SizedBox(width: 20),
-              IconButton(
-                  icon: Icon(
-                    Icons.done_all,
-                    color: Colors.black,
-                  ),
-                  onPressed: null),
-            ],
-          ),
-        ),
       ),
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: StreamBuilder<List<ContestModel>>(
-                stream: _firestore.getUserList(),
+              child: StreamBuilder<List<UserContestModel>>(
+                stream: _firestore.getWinner(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<List<ContestModel>> querySnapshot) {
+                    AsyncSnapshot<List<UserContestModel>> querySnapshot) {
                   if (querySnapshot.hasError) {
                     return Text("Error Loading Data ......");
                   }
@@ -88,7 +53,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                       child: Container(
                                         alignment: Alignment.center,
                                         child: CachedNetworkImage(
-                                          imageUrl: list[index].imageUrl,
+                                          imageUrl: list[index].imageUrlUser,
                                           imageBuilder:
                                               (context, imageProvider) =>
                                                   Container(
@@ -159,31 +124,27 @@ class _OnGoingContestState extends State<OnGoingContest> {
                                         //       Icon(Icons.error),
                                         // ),
                                         title: Text(
-                                          list[index].content == null
+                                          list[index].username == null
                                               ? ""
-                                              : list[index].content,
+                                              : list[index].username,
                                           style: GoogleFonts.acme(
                                               fontSize: 30,
                                               color: Colors.black,
                                               fontStyle: FontStyle.normal,
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        subtitle: Text(
-                                          list[index].description == null
+                                        subtitle:Text(
+                                          list[index].username == null
                                               ? ""
-                                              : list[index].description,
-                                          style: GoogleFonts.asar(
-                                            fontSize: 20,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w300,
-                                            fontStyle: FontStyle.normal,
-                                          ),
+                                              : list[index].username,
+                                          style: GoogleFonts.acme(
+                                              fontSize: 30,
+                                              color: Colors.black,
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         onTap: () => {
-                                          _showDialogBoth(),
-                                          vari.setContestID(list[index].id),
-                                          print(list[index].id),
-                                          print("GetIDD ${vari.getContestID()}")
+                                          _firestore.getWinner(),
                                         },
                                         trailing: Icon(Icons.arrow_forward_ios),
                                       ),
@@ -219,34 +180,4 @@ class _OnGoingContestState extends State<OnGoingContest> {
       ),
     );
   }
-
-  void _showDialogBoth() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("SELECT YOUR OPTION"),
-            content: Text("WOULD YOU LIKE TO JOIN CONTEST OR YOU WANT TO VOTE"),
-            actions: [
-              new FlatButton(
-                  onPressed: () => _buttonOne(), child: Text("PARTICIPATE")),
-              FlatButton(onPressed: () => _buttonTwo(), child: Text("VOTE"))
-            ],
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          );
-        });
-  }
-
-  void _buttonOne() {
-    Navigator.push(
-            context, MaterialPageRoute(builder: (context) => FormParticipate()))
-        .then((value) => Navigator.of(context).pop());
-  }
-
-  void _buttonTwo() => {
-        Navigator.push(context,
-                MaterialPageRoute(builder: (context) => VotingScreen()))
-            .then((value) => Navigator.of(context).pop()),
-      };
 }

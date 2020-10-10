@@ -89,10 +89,6 @@ class _FormParticipateState extends State<FormParticipate> {
           children: <Widget>[
             enableUpload(),
             SizedBox(height: 20),
-            // RaisedButton(
-            //   onPressed: () => {_imgFromGallery()},
-            //   child: Text("IMAGE"),
-            // ),
             nameFormField(),
             SizedBox(
               height: 20,
@@ -119,7 +115,8 @@ class _FormParticipateState extends State<FormParticipate> {
                     email: _email.text,
                     phone: _phone.text,
                     imageUrlUser: url,
-                    votes: 0);
+                    votes: 0,
+                    isWinner: false);
 
                 if (regexEmail.hasMatch(_email.text) &&
                     regMobile.hasMatch(_phone.text)) {
@@ -127,6 +124,7 @@ class _FormParticipateState extends State<FormParticipate> {
                   _name.text = "";
                   _email.text = "";
                   _phone.text = "";
+                  Navigator.pop(context);
                 } else if (!regMobile.hasMatch(_phone.text)) {
                   _showDialogMobile();
                 } else if (!regexEmail.hasMatch(_email.text)) {

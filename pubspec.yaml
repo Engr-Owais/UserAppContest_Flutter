@@ -30,6 +30,8 @@ dependencies:
 
   image_picker:
 
+  cached_network_image: ^2.3.2+1
+
   cloud_firestore: ^0.14.1+2
 
   firebase_database: ^4.1.0
@@ -38,7 +40,9 @@ dependencies:
 
   firebase_storage: ^4.0.1
 
-  cached_network_image: ^2.3.2+1
+  animated_splash_screen: ^1.0.1
+
+  flutter_launcher_icons: ^0.8.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -50,6 +54,12 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_icons:
+  android: "laucher_icon"
+  ios: true
+  image_path: "assets/buffer.png"
+
 
 # The following section is specific to Flutter.
 flutter:

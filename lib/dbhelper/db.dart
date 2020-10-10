@@ -30,15 +30,18 @@ class Database {
     return _firestore
         .collection('contests')
         .doc(vari.getContestID())
-        .collection('users')
+        .collection('users').where("endDate",
+            isGreaterThanOrEqualTo: 
+                new DateTime.now().toUtc().millisecondsSinceEpoch)
         .snapshots()
         .map((_snapShot) => _snapShot.docs
             .map((document) => UserContestModel.fromJson({
                   "id": document.id,
                   "username": document.data()['username'],
                   "email": document.data()['email'],
-                  "votes":document.data()['votes'],
-                  "imageUrlUser":document.data()['imageUrlUser']
+                  "votes": document.data()['votes'],
+                  "imageUrlUser": document.data()['imageUrlUser'],
+                  "isWinner": document.data()['isWinner']
                 }))
             .toList());
   }
@@ -67,5 +70,41 @@ class Database {
         .collection('users')
         .doc(userId)
         .update({'votes': vote + 1});
+  }
+
+  Stream<List<ContestModel>> getExpired() {
+    return _firestore
+        .collection('contests')
+        .where("endDate",
+            isLessThanOrEqualTo:
+                new DateTime.now().toUtc().millisecondsSinceEpoch)
+        .snapshots()
+        .map((snapShot) => snapShot.docs
+            .map((document) => ContestModel.fromJson({
+                  "id": document.id,
+                  "title": document.data()['title'],
+                  "description": document.data()['description'],
+                  "imageUrl": document.data()['imageUrl']
+                }))
+            .toList());
+  }
+
+  Stream<List<UserContestModel>> getWinner() {
+    return _firestore
+        .collection('contests')
+        .doc(vari.getContestID())
+        .collection('users')
+        .where("isWinner", isEqualTo: true)
+        .snapshots()
+        .map((_snapShot) => _snapShot.docs
+            .map((document) => UserContestModel.fromJson({
+                  "id": document.id,
+                  "username": document.data()['username'],
+                  "email": document.data()['email'],
+                  "votes": document.data()['votes'],
+                  "imageUrlUser": document.data()['imageUrlUser'],
+                  "isWinner": document.data()['isWinner']
+                }))
+            .toList());
   }
 }
