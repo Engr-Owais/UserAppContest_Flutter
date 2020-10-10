@@ -24,7 +24,7 @@ class _ResultScreenState extends State<ResultScreen> {
       appBar: AppBar(
         elevation: 3.0,
         title: Text(
-          "EExpired Contest",
+          "Expired Contest",
           style: GoogleFonts.aclonica(color: Colors.black),
         ),
         centerTitle: true,

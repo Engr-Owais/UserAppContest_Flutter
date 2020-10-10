@@ -30,9 +30,7 @@ class Database {
     return _firestore
         .collection('contests')
         .doc(vari.getContestID())
-        .collection('users').where("endDate",
-            isGreaterThanOrEqualTo: 
-                new DateTime.now().toUtc().millisecondsSinceEpoch)
+        .collection('users')
         .snapshots()
         .map((_snapShot) => _snapShot.docs
             .map((document) => UserContestModel.fromJson({
@@ -51,7 +49,9 @@ class Database {
 
     print("dat");
     return _firestore
-        .collection('contests')
+        .collection('contests').where("endDate",
+            isGreaterThanOrEqualTo:
+                new DateTime.now().toUtc().millisecondsSinceEpoch)
         .snapshots()
         .map((snapShot) => snapShot.docs
             .map((document) => ContestModel.fromJson({

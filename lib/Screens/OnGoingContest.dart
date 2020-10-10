@@ -51,12 +51,7 @@ class _OnGoingContestState extends State<OnGoingContest> {
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultScreen()));
                   }),
               SizedBox(width: 20),
-              IconButton(
-                  icon: Icon(
-                    Icons.done_all,
-                    color: Colors.black,
-                  ),
-                  onPressed: null),
+              
             ],
           ),
         ),

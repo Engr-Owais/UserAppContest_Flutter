@@ -134,15 +134,10 @@ class _UserWinnerState extends State<UserWinner> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                         subtitle:Text(
-                                          list[index].username == null
-                                              ? ""
-                                              : list[index].username,
-                                          style: GoogleFonts.acme(
-                                              fontSize: 30,
-                                              color: Colors.black,
-                                              fontStyle: FontStyle.normal,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                                " Votes ${list[index].votes}",
+                                                style: GoogleFonts.workSans(
+                                                    fontSize: 15),
+                                              ),
                                         onTap: () => {
                                           _firestore.getWinner(),
                                         },
